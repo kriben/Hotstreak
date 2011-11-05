@@ -28,3 +28,11 @@ class EntryResource(ModelResource):
         queryset = Entry.objects.all()
         resource_name = 'entry'
         authorization = Authorization()
+        authentication = ApiKeyAuthentication()
+
+    def obj_create(self, bundle, request=None, **kwargs):
+        return super(EntryResource, self).obj_create(bundle, request, 
+                                                    user=request.user)
+
+    def apply_authorization_limits(self, request, object_list):
+        return object_list.filter(task__user=request.user)

@@ -42,7 +42,7 @@ class EmptyDbApiTest(TestCase):
         self.assertEqual(data["objects"][0]["description"], task_description)
 
     def test_get_entry_in_empty_db(self):
-        response = self.client.get(self.entry_url)
+        response = self.client.get(self.entry_url, get_auth_dict(self.user))
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data["meta"]["total_count"], 0)
@@ -51,7 +51,7 @@ class EmptyDbApiTest(TestCase):
         task = self.create_task_for_user(self.user, "My task", "My description")
         self.create_entry_for_task(task, datetime.datetime.now())
         
-        response = self.client.get(self.entry_url)
+        response = self.client.get(self.entry_url, get_auth_dict(self.user))
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data["meta"]["total_count"], 1)
@@ -71,10 +71,12 @@ class AuthenticationApiTest(TestCase):
     fixtures = [ "two_users_with_two_tasks.json" ]
     def setUp(self):
         self.task_url = "/api/v1/task/"
+        self.entry_url = "/api/v1/entry/"
 
-    def testUserSeesOnlyHisOwnTasks(self):
+    def testUserSeesOnlyHisOwnTasksAndEntries(self):
         self.assertEqual(len(User.objects.all()), 2)
         self.assertEqual(len(Task.objects.all()), 4)
+        self.assertEqual(len(Entry.objects.all()), 8)
 
         the_dude = User.objects.get(pk = 1)
         response = self.client.get(self.task_url, get_auth_dict(the_dude))
@@ -86,3 +88,7 @@ class AuthenticationApiTest(TestCase):
         self.assertEquals(data["objects"][0]["title"], "Have a white russian")
         self.assertEquals(data["objects"][1]["title"], "Go bowling")
 
+        response = self.client.get(self.entry_url, get_auth_dict(the_dude))
+        self.assertEquals(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data["meta"]["total_count"], 4)

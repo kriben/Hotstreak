@@ -48,5 +48,61 @@
           "title": "Bowl with jeff and donny",
           "description": ""
       }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 1,
+      "fields": {
+          "task": 1,
+	  "date": "1989-12-01"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 2,
+      "fields": {
+          "task": 1,
+	  "date": "1989-12-02"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 3,
+      "fields": {
+          "task": 2,
+	  "date": "1989-12-02"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 4,
+      "fields": {
+          "task": 2,
+	  "date": "1989-12-03"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 5,
+      "fields": {
+          "task": 3,
+	  "date": "1989-12-01"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 6,
+      "fields": {
+          "task": 3,
+	  "date": "1989-12-02"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 7,
+      "fields": {
+          "task": 4,
+	  "date": "1989-12-02"
+      }
+    },
+    { "model": "hotstreak.entry",
+      "pk": 8,
+      "fields": {
+          "task": 4,
+	  "date": "1989-12-03"
+      }
     }
 ]
