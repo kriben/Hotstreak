@@ -3,6 +3,11 @@ import json
 from django.contrib.auth.models import User
 from hotstreak.models import Task, Entry
 import datetime
+from tastypie.models import ApiKey 
+
+def get_auth_dict(user):
+    api_key = ApiKey.objects.get(user = user)
+    return { "username": api_key.user, "api_key": api_key.key }
 
 class EmptyDbApiTest(TestCase):
     def setUp(self):
@@ -18,7 +23,7 @@ class EmptyDbApiTest(TestCase):
         """
         Tests that we get empty values.
         """
-        response = self.client.get(self.task_url)
+        response = self.client.get(self.task_url, get_auth_dict(self.user))
         self.assertEqual(response.status_code, 200)
 
         data = json.loads(response.content)
@@ -29,7 +34,7 @@ class EmptyDbApiTest(TestCase):
         task_description = "Description of first task"
         self.create_task_for_user(self.user, task_title, task_description)
 
-        response = self.client.get(self.task_url)
+        response = self.client.get(self.task_url, get_auth_dict(self.user))
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data["meta"]["total_count"], 1)
@@ -61,3 +66,23 @@ class EmptyDbApiTest(TestCase):
         entry.save()
         return entry
         
+
+class AuthenticationApiTest(TestCase):
+    fixtures = [ "two_users_with_two_tasks.json" ]
+    def setUp(self):
+        self.task_url = "/api/v1/task/"
+
+    def testUserSeesOnlyHisOwnTasks(self):
+        self.assertEqual(len(User.objects.all()), 2)
+        self.assertEqual(len(Task.objects.all()), 4)
+
+        the_dude = User.objects.get(pk = 1)
+        response = self.client.get(self.task_url, get_auth_dict(the_dude))
+        self.assertEqual(response.status_code, 200)
+        
+        data = json.loads(response.content)
+        self.assertEqual(data["meta"]["total_count"], 2)
+
+        self.assertEquals(data["objects"][0]["title"], "Have a white russian")
+        self.assertEquals(data["objects"][1]["title"], "Go bowling")
+

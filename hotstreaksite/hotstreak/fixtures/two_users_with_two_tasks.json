@@ -1,0 +1,52 @@
+[
+    { "model": "auth.user",
+      "pk": 1,
+      "fields": {
+          "username": "the_dude",
+          "first_name": "Jeffrey",
+          "last_name": "Lebowski",
+          "email": "the_dude@hotmail.com"
+      }
+    },
+    { "model": "auth.user",
+      "pk": 2,
+      "fields": {
+          "username": "walter",
+          "first_name": "Walter",
+          "last_name": "Sobchak",
+          "email": "walter@vietnam_vets.org"
+      }
+    },
+    { "model": "hotstreak.task",
+      "pk": 1,
+      "fields": {
+          "user": 1,
+          "title": "Have a white russian",
+          "description": ""
+      }
+    },
+    { "model": "hotstreak.task",
+      "pk": 2,
+      "fields": {
+          "user": 1,
+          "title": "Go bowling",
+          "description": ""
+      }
+    },
+    { "model": "hotstreak.task",
+      "pk": 3,
+      "fields": {
+          "user": 2,
+          "title": "Get someone a toe",
+          "description": "You want a toe? I can get you a toe, believe me."
+      }
+    },
+    { "model": "hotstreak.task",
+      "pk": 4,
+      "fields": {
+          "user": 2,
+          "title": "Bowl with jeff and donny",
+          "description": ""
+      }
+    }
+]
