@@ -7,7 +7,7 @@ from tastypie.models import ApiKey
 
 def get_auth_dict(user):
     api_key = ApiKey.objects.get(user = user)
-    return { "username": api_key.user, "api_key": api_key.key }
+    return { "username": api_key.user.username, "api_key": api_key.key }
 
 class EmptyDbApiTest(TestCase):
     def setUp(self):
@@ -56,6 +56,12 @@ class EmptyDbApiTest(TestCase):
         data = json.loads(response.content)
         self.assertEqual(data["meta"]["total_count"], 1)
 
+    def test_post_a_new_task(self):
+        auth_data = get_auth_dict(self.user)
+        post_data = { "title": "New task", "description":  "New description" }
+        response = self.client.post("%s?username=%s&api_key=%s" % (self.task_url, auth_data["username"], auth_data["api_key"]), json.dumps(post_data), content_type="application/json") 
+        self.assertEqual(response.status_code, 201)
+
     def create_task_for_user(self, user, title, description):
         task = Task(user = user, title = title, description = description)
         task.save()
@@ -73,7 +79,7 @@ class AuthenticationApiTest(TestCase):
         self.task_url = "/api/v1/task/"
         self.entry_url = "/api/v1/entry/"
 
-    def testUserSeesOnlyHisOwnTasksAndEntries(self):
+    def test_user_sees_only_his_own_tasks_and_entries(self):
         self.assertEqual(len(User.objects.all()), 2)
         self.assertEqual(len(Task.objects.all()), 4)
         self.assertEqual(len(Entry.objects.all()), 8)
@@ -92,3 +98,10 @@ class AuthenticationApiTest(TestCase):
         self.assertEquals(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data["meta"]["total_count"], 4)
+
+    def test_user_sees_only_own_task_by_id(self):
+        the_dude = User.objects.get(pk = 1)
+        response = self.client.get(self.task_url + "3/", get_auth_dict(the_dude))
+        self.assertEqual(response.status_code, 410)
+
+
