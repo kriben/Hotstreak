@@ -62,6 +62,16 @@ class EmptyDbApiTest(TestCase):
         response = self.client.post("%s?username=%s&api_key=%s" % (self.task_url, auth_data["username"], auth_data["api_key"]), json.dumps(post_data), content_type="application/json") 
         self.assertEqual(response.status_code, 201)
 
+    def test_post_a_new_entry(self):
+        task = Task(user = self.user, title = "title", description = "description")
+        task.save()
+
+        post_data = { "task": "/api/v1/task/1/", "date": "2009-11-22" }
+        auth_data = get_auth_dict(self.user)
+        response = self.client.post("%s?username=%s&api_key=%s" % (self.entry_url, auth_data["username"], auth_data["api_key"]), json.dumps(post_data), content_type="application/json") 
+        self.assertEqual(response.status_code, 201)
+
+
     def create_task_for_user(self, user, title, description):
         task = Task(user = user, title = title, description = description)
         task.save()
@@ -103,5 +113,4 @@ class AuthenticationApiTest(TestCase):
         the_dude = User.objects.get(pk = 1)
         response = self.client.get(self.task_url + "3/", get_auth_dict(the_dude))
         self.assertEqual(response.status_code, 410)
-
 

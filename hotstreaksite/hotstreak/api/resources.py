@@ -19,7 +19,11 @@ class TaskResource(ModelResource):
                                                     user=request.user)
 
     def apply_authorization_limits(self, request, object_list):
-        return object_list.filter(user=request.user)
+        if request:
+            return object_list.filter(user=request.user)
+        else:
+            return object_list
+        
 
 class EntryResource(ModelResource):
     task = fields.ForeignKey(TaskResource, 'task')
@@ -32,7 +36,7 @@ class EntryResource(ModelResource):
 
     def obj_create(self, bundle, request=None, **kwargs):
         return super(EntryResource, self).obj_create(bundle, request, 
-                                                    user=request.user)
+                                                     user=request.user)
 
     def apply_authorization_limits(self, request, object_list):
         return object_list.filter(task__user=request.user)
