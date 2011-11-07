@@ -5,5 +5,4 @@ from hotstreak.models import Task
 
 urlpatterns = patterns('hotstreak.views',
     (r'^$', 'index'),
-    (r'^task/(?P<id>\d+)/$', 'task_detail'),
 )

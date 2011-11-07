@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block extra_scripts %}
+    <script src="{{STATIC_URL}}/static/js/jquery-1.7.min.js"></script>
+    <script src="{{STATIC_URL}}/static/js/underscore-min.js"></script>
+    <script src="{{STATIC_URL}}/static/js/backbone-min.js"></script>
+    <script src="{{STATIC_URL}}/static/js/backbone-tastypie.js"></script>
+    <script src="{{STATIC_URL}}/static/js/app.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<div id="app" data-username="{{ username }}" data-apikey="{{api_key}}">
+
+<h1>Tasks</h1>
+<ul id="tasks">
+</ul>
+
+<button class="create_task">Create task</button>
+</div>
+
+{% endblock %}
