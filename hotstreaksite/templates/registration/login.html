@@ -2,26 +2,41 @@
 {% load url from future %}
 
 {% block content %}
-
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
-
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
-{% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
-
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
-</form>
+<div class="container">
+  <div class="content">
+    <div class="row">
+      <div class="span8">
+	
+	{% if form.errors %}
+	<div class="alert-message error">
+	  <p>Your username and password did not match. Please try again.</p>
+	</div>
+	{% endif %}
+	
+	<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+	  <fieldset>
+	    {% csrf_token %}
+	    <div class="clearfix">
+	      {{ form.username.label_tag }}
+              <div class="input">
+		{{ form.username }}
+	      </div>
+            </div>
+	    <div class="clearfix">
+	      {{ form.password.label_tag }}
+	      <div class="input">
+		{{ form.password }}
+	      </div>
+	    </div>
+	    <div class="actions">
+	      <input type="submit" class="btn primary" value="Login" />
+	      <input type="hidden" name="next" value="{{ next }}" />
+	    </div>
+	  </fieldset>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
