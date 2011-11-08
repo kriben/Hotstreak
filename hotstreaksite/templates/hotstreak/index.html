@@ -8,14 +8,46 @@
 {% endblock %}
 
 {% block content %}
-
-<div id="app" data-username="{{ username }}" data-apikey="{{api_key}}">
-
-<h1>Tasks</h1>
-<ul id="tasks">
-</ul>
-
-<button class="create_task">Create task</button>
+<div class="topbar">
+  <div class="fill">
+    <div class="container">
+      <a class="brand" href="#">Hotstreak</a>
+      
+      <ul class="nav">
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
 </div>
+<div class="container">
+  <div class="content">
+    <div class="row">
+      <div class="span10">
 
+	<div id="app" data-username="{{ username }}" data-apikey="{{api_key}}">
+	  
+	  <h1>Tasks</h1>
+	  <ul id="tasks">
+	  </ul>
+      
+	  <form>
+	    <fieldset>
+	      {% csrf_token %}
+	      <div class="clearfix">
+		<label>Title</label>
+		<div class="input"><input id="title" type="text"></div>
+	      </div>
+	      <div class="clearfix">
+		<label>Description</label>
+		<div class="input"><input id="description" type="text"></div>
+	      </div>
+	    </fieldset>
+	  </form>
+	  <button class="btn primary create_task">Create task</button>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
