@@ -10,13 +10,14 @@ $(function() {
         className: 'task',
 
         render: function(){
-            $(this.el).html(this.model.toJSON()["title"]);
+            $(this.el).html("<strong>" + this.model.toJSON()["title"] + '</strong><img src="/static/images/accept.png"><img data-controls-modal="task_calendar_modal" data-backdrop="static" src="/static/images/calendar.png">');
+
             return this;
         }
     });
 
     window.App = Backbone.View.extend({
-        el: $('#app'),
+        el: $('body'),
         username: $("#app").data("username"),
         apikey: $("#app").data("apikey"),
 
@@ -51,6 +52,7 @@ $(function() {
 
             $("#title").val("");
             $("#description").val("");
+	    $("#create_task_modal").modal("hide");
         }
     });
 
