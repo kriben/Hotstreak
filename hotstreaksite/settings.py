@@ -51,7 +51,6 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
-print "MEDIA_ROOT: ", MEDIA_ROOT, SITE_ROOT
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
