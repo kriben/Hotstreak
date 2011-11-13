@@ -3,6 +3,7 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 TASTYPIE_FULL_DEBUG = DEBUG
+API_LIMIT_PER_PAGE = 0
 
 ADMINS = (
     ('Kristian Bendiksen', 'kristian.bendiksen@gmail.com'),

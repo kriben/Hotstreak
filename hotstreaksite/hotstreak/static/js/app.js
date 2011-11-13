@@ -1,8 +1,13 @@
 $(function() {
     window.Task = Backbone.Model.extend({});
+    window.Entry = Backbone.Model.extend({});
 
     window.Tasks = Backbone.Collection.extend({
         urlRoot: "/api/v1/task/"
+    });
+
+    window.Entries = Backbone.Collection.extend({
+        urlRoot: "/api/v1/entry/"
     });
 
     window.TaskView = Backbone.View.extend({
@@ -10,7 +15,7 @@ $(function() {
         className: 'task',
 
         render: function(){
-            $(this.el).html("<strong>" + this.model.toJSON()["title"] + '</strong><img src="/static/images/accept.png"><img data-controls-modal="task_calendar_modal" data-backdrop="static" src="/static/images/calendar.png">');
+            $(this.el).html("<strong>" + this.model.toJSON()["title"] + '</strong><img src="/static/images/accept.png"><img id="open_calendar_modal" src="/static/images/calendar.png">');
 
             return this;
         }
@@ -22,7 +27,10 @@ $(function() {
         apikey: $("#app").data("apikey"),
 
         events: {
-            'click .create_task': 'createTask'
+            'click .create_task': 'createTask',
+            'click #save_dates': 'saveDates',
+            'click #open_calendar_modal': 'openCalendar',
+            'click #close_calendar_modal': 'closeCalendar'
         },
 
         initialize: function(){
@@ -35,24 +43,50 @@ $(function() {
             this.tasks.bind('reset', this.addAll);
             this.tasks.bind('all', this.render);
             this.tasks.fetch();
-        },
 
+            this.entries = new Entries();
+            this.entries.username = this.username;
+            this.entries.apikey = this.apikey;
+        },
         addAll: function(){
             this.tasks.each(this.addOne);
         },
 
-        addOne: function(task){
+        addOne: function(task) {
             var view = new TaskView({model:task});
             this.$('#tasks').append(view.render().el);
         },
-        createTask: function(){
+        createTask: function() {
             this.tasks.create({ title: $("#title").val(),
                                 description: $("#description").val()
                               });
 
             $("#title").val("");
             $("#description").val("");
-	    $("#create_task_modal").modal("hide");
+            $("#create_task_modal").modal("hide");
+        },
+        saveDates: function() {
+            var dates = $("#datepicker").multiDatesPicker('getDates');
+            _.each(dates, function(d) {
+                this.entries.create({ task: "/api/v1/task/1/", date: d });
+            }, this);
+
+            $("#task_calendar_modal").modal("hide");
+        },
+        openCalendar: function() {      
+            this.entries.fetch({ data : { task: 1 },
+                                 success: function(collection) {                
+                                     var dates = _.map(collection.models, function(m) {
+                                         return m.toJSON()["date"];
+                                     });
+                                     $("#datepicker").multiDatesPicker('addDates', dates);
+                                 }
+                               });
+
+            $("#task_calendar_modal").modal("show");
+        },
+        closeCalendar: function() {
+            $("#task_calendar_modal").modal("hide");
         }
     });
 

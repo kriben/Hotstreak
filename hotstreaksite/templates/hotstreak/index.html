@@ -14,7 +14,7 @@
     
     <script>
       $(function() {
-         $("#datepicker").multiDatesPicker({ firstDay: 1,  addDates: ['10/14/2011', '10/15/2011', '10/16/2011']});
+         $("#datepicker").multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
       });
     </script>
 {% endblock %}
@@ -45,7 +45,6 @@
 
 	  <a class="btn" data-controls-modal="create_task_modal" data-backdrop="static" >Create task</a>
 
-	  
           <div id="create_task_modal" class="modal hide">
             <div class="modal-header">
               <a href="#" class="close">&times;</a>
@@ -71,7 +70,6 @@
             </div>
           </div>
 
-
           <div id="task_calendar_modal" class="modal hide">
             <div class="modal-header">
               <a href="#" class="close">&times;</a>
@@ -81,12 +79,10 @@
 	      <div id="datepicker"></div>
             </div>
             <div class="modal-footer">
-	      <button class="btn primary">OK</button>
-	      <button class="btn primary">Cancel</button>
+	      <button id="save_dates" class="btn primary">OK</button>
+	      <button id="close_calendar_modal" class="btn secondary">Cancel</button>
             </div>
           </div>
-      
-
 
 	</div>
       </div>

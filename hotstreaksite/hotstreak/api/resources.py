@@ -33,6 +33,9 @@ class EntryResource(ModelResource):
         resource_name = 'entry'
         authorization = Authorization()
         authentication = ApiKeyAuthentication()
+        filtering = {
+            "task": ("exact",)
+            } 
 
     def obj_create(self, bundle, request=None, **kwargs):
         return super(EntryResource, self).obj_create(bundle, request, 
