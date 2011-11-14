@@ -15,7 +15,8 @@ $(function() {
         className: 'task',
 
         render: function(){
-            $(this.el).html("<strong>" + this.model.toJSON()["title"] + '</strong><img src="/static/images/accept.png"><img id="open_calendar_modal" src="/static/images/calendar.png">');
+            var task = this.model.toJSON();
+            $(this.el).html("<strong>" + task["title"] + '</strong><img src="/static/images/accept.png"><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png">');
 
             return this;
         }
@@ -25,6 +26,7 @@ $(function() {
         el: $('body'),
         username: $("#app").data("username"),
         apikey: $("#app").data("apikey"),
+        currentId: undefined,
 
         events: {
             'click .create_task': 'createTask',
@@ -68,18 +70,25 @@ $(function() {
         saveDates: function() {
             var dates = $("#datepicker").multiDatesPicker('getDates');
             _.each(dates, function(d) {
-                this.entries.create({ task: "/api/v1/task/1/", date: d });
+                this.entries.create({ task: "/api/v1/task/" + currentId + "/", date: d });
             }, this);
-
             $("#task_calendar_modal").modal("hide");
+            $("#datepicker").multiDatesPicker("resetDates");
+	    currentId = undefined;
         },
-        openCalendar: function() {      
-            this.entries.fetch({ data : { task: 1 },
-                                 success: function(collection) {                
+        openCalendar: function(event) {
+            $("#datepicker").multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
+            $("#datepicker").multiDatesPicker("resetDates");
+            var taskId = $(event.currentTarget).data("taskid");
+            currentId = taskId;
+            this.entries.fetch({ data : { task: taskId },
+                                 success: function(collection) {
                                      var dates = _.map(collection.models, function(m) {
                                          return m.toJSON()["date"];
                                      });
-                                     $("#datepicker").multiDatesPicker('addDates', dates);
+                                     if (dates.length > 0) {
+                                         $("#datepicker").multiDatesPicker('addDates', dates);
+                                     }
                                  }
                                });
 
@@ -87,6 +96,8 @@ $(function() {
         },
         closeCalendar: function() {
             $("#task_calendar_modal").modal("hide");
+            $("#datepicker").multiDatesPicker("resetDates");
+            currentId = undefined;
         }
     });
 
