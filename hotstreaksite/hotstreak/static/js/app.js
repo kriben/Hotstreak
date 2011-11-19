@@ -72,9 +72,7 @@ $(function() {
             _.each(dates, function(d) {
                 this.entries.create({ task: "/api/v1/task/" + currentId + "/", date: d });
             }, this);
-            $("#task_calendar_modal").modal("hide");
-            $("#datepicker").multiDatesPicker("resetDates");
-	    currentId = undefined;
+            this.closeCalendar();
         },
         openCalendar: function(event) {
             $("#datepicker").multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
