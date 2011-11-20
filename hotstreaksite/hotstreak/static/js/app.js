@@ -16,7 +16,7 @@ $(function() {
 
         render: function(){
             var task = this.model.toJSON();
-            $(this.el).html("<strong>" + task["title"] + '</strong><img src="/static/images/accept.png"><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png">');
+            $(this.el).html("<strong>" + task["title"] + '</strong><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png">');
 
             return this;
         }
