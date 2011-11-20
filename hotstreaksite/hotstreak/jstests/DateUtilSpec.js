@@ -15,11 +15,24 @@ describe("DateUtil", function() {
 	expect(DateUtil.computeConsecutiveDays([])).toEqual(0);
     });
 
-    it("can compute number of consecutive days empty input", function() {    
-	expect(DateUtil.computeConsecutiveDays([])).toEqual(0);
-    });
-
     it("can compute number of consecutive days on single date input", function() {    
 	expect(DateUtil.computeConsecutiveDays(["1979-09-07"])).toEqual(1);
+    });
+    
+    it("can find difference between two arrays of dates", function() {
+	var a = [ "1979-09-07", "2011-11-18" ]; 
+	var b = [ "1980-02-08", "2011-11-18" ]; 
+	
+	var sets = DateUtil.findSets(a, b);
+	expect(sets["inBoth"]).toEqual(["2011-11-18"]); 
+	expect(sets["onlyInA"]).toEqual(["1979-09-07"]); 
+	expect(sets["onlyInB"]).toEqual(["1980-02-08"]); 
+    });
+
+    it("can find difference between two empty arrays of dates", function() {
+	var sets = DateUtil.findSets([], []);
+	expect(sets["inBoth"]).toEqual([]); 
+	expect(sets["onlyInA"]).toEqual([]); 
+	expect(sets["onlyInB"]).toEqual([]); 
     });
 });

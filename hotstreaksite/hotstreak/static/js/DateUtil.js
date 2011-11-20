@@ -26,4 +26,11 @@ var DateUtil = new function() {
 
 	return longest + 1;
     };
+
+    this.findSets = function(a, b) {
+	var inBoth = _.intersection(a, b);
+	var onlyInA = _.difference(a, b);
+	var onlyInB = _.difference(b, a);
+	return { inBoth: inBoth, onlyInA: onlyInA, onlyInB: onlyInB };    
+    };
 };
