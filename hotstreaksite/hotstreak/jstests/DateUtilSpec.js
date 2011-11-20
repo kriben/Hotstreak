@@ -35,4 +35,17 @@ describe("DateUtil", function() {
 	expect(sets["onlyInA"]).toEqual([]); 
 	expect(sets["onlyInB"]).toEqual([]); 
     });
+
+    it("should compute current streak", function() {
+	var today = "2011-11-22";
+	var dates = [ "1980-02-08", "2011-11-19", "2011-11-20", "2011-11-21" ]; 
+	var currentStreak = DateUtil.computeCurrentStreak(today, dates);
+	expect(currentStreak).toEqual(3);
+    });
+
+    it("should compute current streak for one date", function() {
+	var today = "2011-11-22";
+	var dates = [ "2011-11-21" ];
+	expect(DateUtil.computeCurrentStreak(today, dates)).toEqual(1);
+    });
 });

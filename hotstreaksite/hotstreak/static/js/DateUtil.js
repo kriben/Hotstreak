@@ -33,4 +33,27 @@ var DateUtil = new function() {
 	var onlyInB = _.difference(b, a);
 	return { inBoth: inBoth, onlyInA: onlyInA, onlyInB: onlyInB };    
     };
+
+    this.computeCurrentStreak = function(date, dates) {
+	if (dates.length === 0)
+	    return 0;
+
+	var ordinalDays = _.map(dates, getDaysSinceEpoch).reverse();;
+	var targetDate = getDaysSinceEpoch(date);
+
+	// Check if we have a streak at all
+	var diff = targetDate - ordinalDays[0];
+	if (diff  !== 1 && diff !== 0)
+	    return 0;
+
+	var currentStreak = 1;
+	for (var i = 0; i < ordinalDays.length - 1; i++) {
+	    if (ordinalDays[i] - ordinalDays[i + 1] === 1)
+		currentStreak++;
+	    else 
+		break;
+	}
+
+	return currentStreak;	
+    };
 };

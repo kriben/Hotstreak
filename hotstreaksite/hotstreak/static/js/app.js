@@ -16,7 +16,7 @@ $(function() {
 
         render: function(){
             var task = this.model.toJSON();
-            $(this.el).html("<strong>" + task["title"] + '</strong><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png"><div id="longest"></div>');
+            $(this.el).html("<strong>" + task["title"] + '</strong><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png"><div id="current"></div><div id="longest"></div>');
             return this;
         }
     });
@@ -73,13 +73,15 @@ $(function() {
             var dates = _.map(entry.collection.models, function(m) {
                 return m.toJSON()["date"];
             });
-	    var nDays = DateUtil.computeConsecutiveDays(dates.sort());
-	    
+	    var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
+	    var currentStreak = DateUtil.computeCurrentStreak(moment().format("YYYY-MM-DD"), dates.sort());
+
 	    var taskId = entry.get("task").split("/")[4];
 	    var taskElement = $('.task img').filter(function() {
 		return (taskId == $(this).data('taskid'));
 	    });
-	    $(taskElement[0]).parent().find("#longest").html("Longest streak: " + nDays);
+	    $(taskElement[0]).parent().find("#longest").html("Longest streak: " + longestStreak);
+	    $(taskElement[0]).parent().find("#current").html("Current streak: " + currentStreak);
 	},
         saveDates: function() {
             var dates = $("#datepicker").multiDatesPicker('getDates');
