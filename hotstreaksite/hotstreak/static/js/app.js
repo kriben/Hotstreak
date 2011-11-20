@@ -27,6 +27,7 @@ $(function() {
         username: $("#app").data("username"),
         apikey: $("#app").data("apikey"),
         currentId: undefined,
+        currentDates: [],
 
         events: {
             'click .create_task': 'createTask',
@@ -69,9 +70,27 @@ $(function() {
         },
         saveDates: function() {
             var dates = $("#datepicker").multiDatesPicker('getDates');
-            _.each(dates, function(d) {
+            var sets = DateUtil.findSets(currentDates, dates);
+            var datesToDelete = sets["onlyInA"];
+            var datesToCreate = sets["onlyInB"];
+
+            // Create the new dates (not in list from before)
+            _.each(datesToCreate, function(d) {
                 this.entries.create({ task: "/api/v1/task/" + currentId + "/", date: d });
             }, this);
+
+            // Find the dates deleted by the user (was in the old list, not in the new)
+            var entriesToDelete = _.map(datesToDelete, function(date) {
+                return _.find(this.entries.models, function(entry) {
+                    return entry.get("date") === date;
+                });
+            }, this);
+
+            // Delete the entries which the user unmarked
+            _.each(entriesToDelete, function(d) {
+                d.destroy();
+            });
+
             this.closeCalendar();
         },
         openCalendar: function(event) {
@@ -79,11 +98,13 @@ $(function() {
             $("#datepicker").multiDatesPicker("resetDates");
             var taskId = $(event.currentTarget).data("taskid");
             currentId = taskId;
+
             this.entries.fetch({ data : { task: taskId },
                                  success: function(collection) {
                                      var dates = _.map(collection.models, function(m) {
                                          return m.toJSON()["date"];
                                      });
+                                     currentDates = dates;
                                      if (dates.length > 0) {
                                          $("#datepicker").multiDatesPicker('addDates', dates);
                                      }
@@ -96,6 +117,7 @@ $(function() {
             $("#task_calendar_modal").modal("hide");
             $("#datepicker").multiDatesPicker("resetDates");
             currentId = undefined;
+            currentDates = [];
         }
     });
 

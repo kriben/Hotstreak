@@ -67,7 +67,10 @@
 	    url = this.collection && ( _.isFunction( this.collection.url ) ? this.collection.url() : this.collection.url );
 	    url = url || this.urlRoot;
 	}
-	
+	else {
+	    return this.addApiKey(url);
+	}
+
 	if (_.isFunction(this.collection.url)) {
 	    return url;
 	}
