@@ -16,8 +16,7 @@ $(function() {
 
         render: function(){
             var task = this.model.toJSON();
-            $(this.el).html("<strong>" + task["title"] + '</strong><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png">');
-
+            $(this.el).html("<strong>" + task["title"] + '</strong><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png"><div id="longest"></div>');
             return this;
         }
     });
@@ -37,7 +36,7 @@ $(function() {
         },
 
         initialize: function(){
-            _.bindAll(this, 'addOne', 'addAll', 'render');
+            _.bindAll(this, 'addOne', 'addAll', 'render', 'updateLongestStreak');
             this.tasks = new Tasks();
             this.tasks.username = this.username;
             this.tasks.apikey = this.apikey;
@@ -50,6 +49,8 @@ $(function() {
             this.entries = new Entries();
             this.entries.username = this.username;
             this.entries.apikey = this.apikey;
+	    this.entries.bind('add', this.updateLongestStreak);
+	    this.entries.bind('remove', this.updateLongestStreak);
         },
         addAll: function(){
             this.tasks.each(this.addOne);
@@ -68,6 +69,18 @@ $(function() {
             $("#description").val("");
             $("#create_task_modal").modal("hide");
         },
+	updateLongestStreak: function(entry) {
+            var dates = _.map(entry.collection.models, function(m) {
+                return m.toJSON()["date"];
+            });
+	    var nDays = DateUtil.computeConsecutiveDays(dates.sort());
+	    
+	    var taskId = entry.get("task").split("/")[4];
+	    var taskElement = $('.task img').filter(function() {
+		return (taskId == $(this).data('taskid'));
+	    });
+	    $(taskElement[0]).parent().find("#longest").html("Longest streak: " + nDays);
+	},
         saveDates: function() {
             var dates = $("#datepicker").multiDatesPicker('getDates');
             var sets = DateUtil.findSets(currentDates, dates);
