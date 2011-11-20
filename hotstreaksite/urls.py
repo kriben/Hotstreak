@@ -12,7 +12,7 @@ v1_api.register(TaskResource())
 v1_api.register(EntryResource())
 
 urlpatterns = patterns('',
-                       url(r'^hotstreak/', include('hotstreak.urls')),
+                       url(r'^$', include('hotstreak.urls')),
                        url(r'^api/', include(v1_api.urls)),
                        url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
                        url(r'^admin/', include(admin.site.urls)),
