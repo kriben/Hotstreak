@@ -127,7 +127,8 @@ INSTALLED_APPS = (
     'hotstreaksite.hotstreak',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    'tastypie'
+    'tastypie',
+    'gunicorn',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
