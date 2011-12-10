@@ -1,6 +1,6 @@
 var DateUtil = new function() {
     var getDaysSinceEpoch = function(day) {
-	var epoch = moment("1970-1-1");
+	var epoch = moment("1970-01-01");
 	return moment(day).diff(epoch, "days");
     };
 
@@ -9,7 +9,6 @@ var DateUtil = new function() {
 	    return 0;
 
 	var ordinalDays = _.map(days, getDaysSinceEpoch);
-
 	var longest = 0;
 	var current = 0;
 	for (var i = 0; i < ordinalDays.length - 1; i++) {
