@@ -13,30 +13,102 @@ $(function() {
     window.TaskView = Backbone.View.extend({
         tagName: 'li',
         className: 'task',
-
+        username: $("#app").data("username"),
+        apikey: $("#app").data("apikey"),
+        currentDates: [],
+        events: {
+            'click #open_calendar_modal': 'openCalendar',
+            'click #save_dates': 'saveDates',
+            'click #close_calendar_modal': 'closeCalendar'
+        },
+        initialize: function() {
+            this.entries = new Entries();
+            this.entries.username = this.username;
+            this.entries.apikey = this.apikey;
+            this.entries.bind('add', this.updateLongestStreak);
+            this.entries.bind('remove', this.updateLongestStreak);
+        },
         render: function(){
             var task = this.model.toJSON();
-            $(this.el).html("<strong>" + task["title"] + '</strong><img id="open_calendar_modal" data-taskid="' + task["id"] + '" src="/static/images/calendar.png"><div id="current"></div><div id="longest"></div>');
+            $(this.el).html(_.template($("#task_template").html(), { title : task["title"], id : task["id"] }));
             return this;
+        },
+        openCalendar: function(event) {
+            var datepickerId = "#datepicker" + this.model.get("id");
+            this.$(datepickerId).multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
+            this.$(datepickerId).multiDatesPicker("resetDates");
+
+            this.entries.fetch({ data : { task: this.model.get("id") },
+                                 success: function(collection) {
+                                     var dates = _.map(collection.models, function(m) {
+                                         return m.toJSON()["date"];
+                                     });
+                                     currentDates = dates;
+                                     if (dates.length > 0) {
+                                         this.$(datepickerId).multiDatesPicker('addDates', dates);
+                                     }
+                                 }
+                               });
+
+            this.$("#task_calendar_modal").modal("show");
+        },
+        updateLongestStreak: function(entry) {
+            var dates = _.map(entry.collection.models, function(m) {
+                return m.toJSON()["date"];
+            });
+            var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
+            var currentStreak = DateUtil.computeCurrentStreak(moment().format("YYYY-MM-DD"), dates.sort());
+
+            var taskId = entry.get("task").split("/")[4];
+            var taskElement = $('.task img').filter(function() {
+                return (taskId == $(this).data('taskid'));
+            });
+
+            $(taskElement[0]).parent().find("#longest").html("Longest streak: " + longestStreak);
+            $(taskElement[0]).parent().find("#current").html("Current streak: " + currentStreak);
+        },
+        saveDates: function() {
+            var datepickerId = "#datepicker" + this.model.get("id");
+            var dates = this.$(datepickerId).multiDatesPicker('getDates');
+            var sets = DateUtil.findSets(currentDates, dates);
+            var datesToDelete = sets["onlyInA"];
+            var datesToCreate = sets["onlyInB"];
+
+            // Create the new dates (not in list from before)
+            _.each(datesToCreate, function(d) {
+                this.entries.create({ task: this.model.id, date: d });
+            }, this);
+
+            // Find the dates deleted by the user (was in the old list, not in the new)
+            var entriesToDelete = _.map(datesToDelete, function(date) {
+                return _.find(this.entries.models, function(entry) {
+                    return entry.get("date") === date;
+                });
+            }, this);
+            // Delete the entries which the user unmarked
+            _.each(entriesToDelete, function(d) {
+                d.destroy();
+            });
+
+            this.closeCalendar();
+        },
+        closeCalendar: function() {
+            var datepickerId = "#datepicker" + this.model.get("id");
+            this.$(datepickerId).multiDatesPicker("resetDates");
+            this.$("#task_calendar_modal").modal("hide");
+            currentDates = [];
         }
     });
 
     window.App = Backbone.View.extend({
-        el: $('body'),
+        el: $('#app'),
         username: $("#app").data("username"),
         apikey: $("#app").data("apikey"),
-        currentId: undefined,
-        currentDates: [],
-
         events: {
             'click .create_task': 'createTask',
-            'click #save_dates': 'saveDates',
-            'click #open_calendar_modal': 'openCalendar',
-            'click #close_calendar_modal': 'closeCalendar'
         },
-
         initialize: function(){
-            _.bindAll(this, 'addOne', 'addAll', 'render', 'updateLongestStreak');
+            _.bindAll(this, 'addOne', 'addAll', 'render');
             this.tasks = new Tasks();
             this.tasks.username = this.username;
             this.tasks.apikey = this.apikey;
@@ -45,17 +117,10 @@ $(function() {
             this.tasks.bind('reset', this.addAll);
             this.tasks.bind('all', this.render);
             this.tasks.fetch();
-
-            this.entries = new Entries();
-            this.entries.username = this.username;
-            this.entries.apikey = this.apikey;
-	    this.entries.bind('add', this.updateLongestStreak);
-	    this.entries.bind('remove', this.updateLongestStreak);
         },
         addAll: function(){
             this.tasks.each(this.addOne);
         },
-
         addOne: function(task) {
             var view = new TaskView({model:task});
             this.$('#tasks').append(view.render().el);
@@ -69,71 +134,6 @@ $(function() {
             $("#description").val("");
             $("#create_task_modal").modal("hide");
         },
-	updateLongestStreak: function(entry) {
-            var dates = _.map(entry.collection.models, function(m) {
-                return m.toJSON()["date"];
-            });
-	    var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
-	    var currentStreak = DateUtil.computeCurrentStreak(moment().format("YYYY-MM-DD"), dates.sort());
-
-	    var taskId = entry.get("task").split("/")[4];
-	    var taskElement = $('.task img').filter(function() {
-		return (taskId == $(this).data('taskid'));
-	    });
-	    $(taskElement[0]).parent().find("#longest").html("Longest streak: " + longestStreak);
-	    $(taskElement[0]).parent().find("#current").html("Current streak: " + currentStreak);
-	},
-        saveDates: function() {
-            var dates = $("#datepicker").multiDatesPicker('getDates');
-            var sets = DateUtil.findSets(currentDates, dates);
-            var datesToDelete = sets["onlyInA"];
-            var datesToCreate = sets["onlyInB"];
-
-            // Create the new dates (not in list from before)
-            _.each(datesToCreate, function(d) {
-                this.entries.create({ task: "/api/v1/task/" + currentId + "/", date: d });
-            }, this);
-
-            // Find the dates deleted by the user (was in the old list, not in the new)
-            var entriesToDelete = _.map(datesToDelete, function(date) {
-                return _.find(this.entries.models, function(entry) {
-                    return entry.get("date") === date;
-                });
-            }, this);
-
-            // Delete the entries which the user unmarked
-            _.each(entriesToDelete, function(d) {
-                d.destroy();
-            });
-
-            this.closeCalendar();
-        },
-        openCalendar: function(event) {
-            $("#datepicker").multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
-            $("#datepicker").multiDatesPicker("resetDates");
-            var taskId = $(event.currentTarget).data("taskid");
-            currentId = taskId;
-
-            this.entries.fetch({ data : { task: taskId },
-                                 success: function(collection) {
-                                     var dates = _.map(collection.models, function(m) {
-                                         return m.toJSON()["date"];
-                                     });
-                                     currentDates = dates;
-                                     if (dates.length > 0) {
-                                         $("#datepicker").multiDatesPicker('addDates', dates);
-                                     }
-                                 }
-                               });
-
-            $("#task_calendar_modal").modal("show");
-        },
-        closeCalendar: function() {
-            $("#task_calendar_modal").modal("hide");
-            $("#datepicker").multiDatesPicker("resetDates");
-            currentId = undefined;
-            currentDates = [];
-        }
     });
 
     window.app = new App();

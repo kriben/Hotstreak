@@ -81,9 +81,7 @@
         backdrop.call(this, function () {
           var transition = $.support.transition && that.$element.hasClass('fade')
 
-          that.$element
-            .appendTo(document.body)
-            .show()
+          that.$element.show()
 
           if (transition) {
             that.$element[0].offsetWidth // force reflow

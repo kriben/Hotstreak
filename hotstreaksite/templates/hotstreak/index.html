@@ -9,19 +9,41 @@
     <script src="{{STATIC_URL}}/static/js/backbone-min.js"></script>
     <script src="{{STATIC_URL}}/static/js/backbone-tastypie.js"></script>
     <script src="{{STATIC_URL}}/static/js/jquery-ui-1.8.16.custom.min.js"></script>
-    <script src="{{STATIC_URL}}/static/js/jquery-ui.multidatespicker.js"></script> 
-    <script src="{{STATIC_URL}}/static/js/bootstrap-modal.js"></script> 
+    <script src="{{STATIC_URL}}/static/js/jquery-ui.multidatespicker.js"></script>
+    <script src="{{STATIC_URL}}/static/js/bootstrap-modal.js"></script>
     <script src="{{STATIC_URL}}/static/js/DateUtil.js"></script>
     <script src="{{STATIC_URL}}/static/js/app.js"></script>
 
 {% endblock %}
 
 {% block content %}
+
+<script type="text/template" id="task_template">
+  <strong><%= title %></strong><img id="open_calendar_modal" data-taskid="<%= id %>" src="/static/images/calendar.png">
+  <div id="current"></div>
+  <div id="longest"></div>
+
+  <div id="task_calendar_modal" class="modal hide">
+    <div class="modal-header">
+      <a href="#" class="close">&times;</a>
+      <h3>Mark task: <%= title %></h3>
+    </div>
+    <div class="modal-body">
+      <div id="datepicker<%= id %>"></div>
+    </div>
+    <div class="modal-footer">
+      <button id="save_dates" class="test btn primary">OK</button>
+      <button id="close_calendar_modal" class="btn secondary">Cancel</button>
+    </div>
+  </div>
+</script>
+
+
 <div class="topbar">
   <div class="fill">
     <div class="container">
       <a class="brand" href="#">Hotstreak</a>
-      
+
       <ul class="nav">
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -34,13 +56,13 @@
     <div class="row">
       <div class="span10">
 
-	<div id="app" data-username="{{ username }}" data-apikey="{{api_key}}">
-	  
-	  <h1>Tasks</h1>
-	  <ul id="tasks">
-	  </ul>
+        <div id="app" data-username="{{ username }}" data-apikey="{{api_key}}">
 
-	  <a class="btn" data-controls-modal="create_task_modal" data-backdrop="static" >Create task</a>
+          <h1>Tasks</h1>
+          <ul id="tasks">
+          </ul>
+
+          <a class="btn" data-controls-modal="create_task_modal" data-backdrop="static" >Create task</a>
 
           <div id="create_task_modal" class="modal hide">
             <div class="modal-header">
@@ -48,40 +70,25 @@
               <h3>Create task</h3>
             </div>
             <div class="modal-body">
-	      <form>
-		<fieldset>
-		  {% csrf_token %}
-		  <div class="clearfix">
-		    <label>Title</label>
-		    <div class="input"><input id="title" type="text"></div>
-		  </div>
-		  <div class="clearfix">
-		    <label>Description</label>
-		    <div class="input"><input id="description" type="text"></div>
-		  </div>
-		</fieldset>
-	      </form>
+              <form>
+                <fieldset>
+                  {% csrf_token %}
+                  <div class="clearfix">
+                    <label>Title</label>
+                    <div class="input"><input id="title" type="text"></div>
+                  </div>
+                  <div class="clearfix">
+                    <label>Description</label>
+                    <div class="input"><input id="description" type="text"></div>
+                  </div>
+                </fieldset>
+              </form>
             </div>
             <div class="modal-footer">
-	      <button id="create_task" class="btn primary create_task">Create task</button>
+              <button id="create_task" class="btn primary create_task">Create task</button>
             </div>
           </div>
-
-          <div id="task_calendar_modal" class="modal hide">
-            <div class="modal-header">
-              <a href="#" class="close">&times;</a>
-              <h3>Mark task</h3>
-            </div>
-            <div class="modal-body">
-	      <div id="datepicker"></div>
-            </div>
-            <div class="modal-footer">
-	      <button id="save_dates" class="btn primary">OK</button>
-	      <button id="close_calendar_modal" class="btn secondary">Cancel</button>
-            </div>
-          </div>
-
-	</div>
+        </div>
       </div>
     </div>
   </div>
