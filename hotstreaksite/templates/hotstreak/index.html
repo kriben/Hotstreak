@@ -20,7 +20,9 @@
 {% block content %}
 
 <script type="text/template" id="task_template">
-  <strong><%= title %></strong><img id="open_calendar_modal" data-taskid="<%= id %>" src="/static/images/calendar.png">
+  <strong><%= title %></strong>
+  <img id="open_calendar_modal" data-taskid="<%= id %>" src="/static/images/calendar.png">
+  <img id="mark_task_for_today" src="/static/images/accept.png">
   <div id="current"></div>
   <div id="longest"></div>
 

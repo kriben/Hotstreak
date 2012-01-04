@@ -19,7 +19,8 @@ $(function() {
         events: {
             'click #open_calendar_modal': 'openCalendar',
             'click #save_dates': 'saveDates',
-            'click #close_calendar_modal': 'closeCalendar'
+            'click #close_calendar_modal': 'closeCalendar',
+            'click #mark_task_for_today': 'markTaskForToday',
         },
         initialize: function() {
             this.entries = new Entries();
@@ -51,6 +52,22 @@ $(function() {
                                });
 
             this.$("#task_calendar_modal").modal("show");
+        },
+        markTaskForToday: function(event) {
+            var today = moment().format("YYYY-MM-DD");
+            var task = this.model;
+            var view = this;
+            var markTaskIfNotInList = function(collection) {
+                var dateAlreadyMarked = _.any(collection.models, function(m) {
+                    return m.toJSON()["date"] === today;
+                });
+                if (!dateAlreadyMarked) {
+                    view.entries.create({ task: task.id, date: today });
+                }
+            }
+
+            this.entries.fetch({ data : { task: task.get("id") },
+                                 success: markTaskIfNotInList });
         },
         updateLongestStreak: function(entry) {
             var dates = _.map(entry.collection.models, function(m) {
