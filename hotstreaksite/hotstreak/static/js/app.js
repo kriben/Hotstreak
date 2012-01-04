@@ -34,26 +34,27 @@ $(function() {
             $(this.el).html(_.template($("#task_template").html(), { title : task["title"], id : task["id"] }));
             return this;
         },
-        openCalendar: function(event) {
+        openCalendar: function() {
             var datepickerId = "#datepicker" + this.model.get("id");
             this.$(datepickerId).multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
             this.$(datepickerId).multiDatesPicker("resetDates");
 
+            var setDatesInCalendar = function(collection) {
+                var dates = _.map(collection.models, function(m) {
+                    return m.toJSON()["date"];
+                });
+                currentDates = dates;
+                if (dates.length > 0) {
+                    this.$(datepickerId).multiDatesPicker('addDates', dates);
+                }
+            }
+
             this.entries.fetch({ data : { task: this.model.get("id") },
-                                 success: function(collection) {
-                                     var dates = _.map(collection.models, function(m) {
-                                         return m.toJSON()["date"];
-                                     });
-                                     currentDates = dates;
-                                     if (dates.length > 0) {
-                                         this.$(datepickerId).multiDatesPicker('addDates', dates);
-                                     }
-                                 }
-                               });
+                                 success: setDatesInCalendar });
 
             this.$("#task_calendar_modal").modal("show");
         },
-        markTaskForToday: function(event) {
+        markTaskForToday: function() {
             var today = moment().format("YYYY-MM-DD");
             var task = this.model;
             var view = this;
