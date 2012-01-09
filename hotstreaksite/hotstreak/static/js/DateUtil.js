@@ -12,12 +12,10 @@ var DateUtil = new function() {
         var longest = 0;
         var current = 0;
         for (var i = 0; i < ordinalDays.length - 1; i++) {
-            if (ordinalDays[i] - ordinalDays[i + 1] === -1) {
+            if (ordinalDays[i] - ordinalDays[i + 1] === -1)
                 current = current + 1;
-            }
-            else {
+            else
                 current = 0;
-            }
 
             if (current > longest)
                 longest = current;
@@ -49,14 +47,14 @@ var DateUtil = new function() {
         if (diff !== 1 && diff !== 0)
             return 0;
 
-        var currentStreak = 1;
+        var current = 1;
         for (var i = 0; i < ordinalDays.length - 1; i++) {
             if (ordinalDays[i] - ordinalDays[i + 1] === 1)
-                currentStreak++;
+                current++;
             else
                 break;
         }
 
-        return currentStreak;
+        return current;
     };
 };
