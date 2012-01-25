@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block extra_scripts %}
 
-    <link type="text/css" href="{{STATIC_URL}}/static/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />
-    <link type="text/css" href="{{STATIC_URL}}/static/css/multidatepickerfix.css" rel="Stylesheet" />
+    <link type="text/css" href="{{STATIC_URL}}css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />
+    <link type="text/css" href="{{STATIC_URL}}css/multidatepickerfix.css" rel="Stylesheet" />
 
-    <script src="{{STATIC_URL}}/static/js/jquery-1.7.min.js"></script>
-    <script src="{{STATIC_URL}}/static/js/underscore-min.js"></script>
-    <script src="{{STATIC_URL}}/static/js/moment.min.js"></script>
-    <script src="{{STATIC_URL}}/static/js/backbone-min.js"></script>
-    <script src="{{STATIC_URL}}/static/js/backbone-tastypie.js"></script>
-    <script src="{{STATIC_URL}}/static/js/jquery-ui-1.8.16.custom.min.js"></script>
-    <script src="{{STATIC_URL}}/static/js/jquery-ui.multidatespicker.js"></script>
-    <script src="{{STATIC_URL}}/static/js/bootstrap-modal.js"></script>
-    <script src="{{STATIC_URL}}/static/js/DateUtil.js"></script>
-    <script src="{{STATIC_URL}}/static/js/app.js"></script>
+    <script src="{{STATIC_URL}}js/jquery-1.7.min.js"></script>
+    <script src="{{STATIC_URL}}js/underscore-min.js"></script>
+    <script src="{{STATIC_URL}}js/moment.min.js"></script>
+    <script src="{{STATIC_URL}}js/backbone-min.js"></script>
+    <script src="{{STATIC_URL}}js/backbone-tastypie.js"></script>
+    <script src="{{STATIC_URL}}js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery-ui.multidatespicker.js"></script>
+    <script src="{{STATIC_URL}}js/bootstrap-modal.js"></script>
+    <script src="{{STATIC_URL}}js/DateUtil.js"></script>
+    <script src="{{STATIC_URL}}js/app.js"></script>
 
 {% endblock %}
 
@@ -21,8 +21,8 @@
 
 <script type="text/template" id="task_template">
   <strong><%= title %></strong>
-  <img id="open_calendar_modal" data-taskid="<%= id %>" src="/static/images/calendar.png">
-  <img id="mark_task_for_today" src="/static/images/accept.png">
+  <img id="open_calendar_modal" data-taskid="<%= id %>" src="{{STATIC_URL}}images/calendar.png">
+  <img id="mark_task_for_today" src="{{STATIC_URL}}images/accept.png">
   <div id="current"></div>
   <div id="longest"></div>
 

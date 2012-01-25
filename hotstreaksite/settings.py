@@ -1,8 +1,6 @@
 # Django settings for hotstreaksite project.
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-TASTYPIE_FULL_DEBUG = DEBUG
+DEBUG = False
 API_LIMIT_PER_PAGE = 0
 
 
@@ -80,7 +78,7 @@ STATIC_ROOT = os.path.join(SITE_ROOT, "static")
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -175,3 +173,6 @@ try:
     from settings_local import *
 except ImportError:
     pass
+
+TEMPLATE_DEBUG = DEBUG
+TASTYPIE_FULL_DEBUG = DEBUG

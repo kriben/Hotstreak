@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.conf.urls.defaults import *
 from tastypie.api import Api
 from hotstreak.api.resources import TaskResource, EntryResource
+from hotstreaksite import settings
 
 admin.autodiscover()
 
@@ -19,4 +20,5 @@ urlpatterns = patterns('',
 )
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-urlpatterns += staticfiles_urlpatterns()
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()
