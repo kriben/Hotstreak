@@ -17,7 +17,7 @@
     Backbone.sync = function( method, model, options ) {
 	if ( method === 'create' ) {
 	    var dfd = new $.Deferred();
-	    
+
 	    // Set up 'success' handling
 	    dfd.done( options.success );
 	    options.success = function( resp, status, xhr ) {
@@ -25,6 +25,10 @@
 		// Otherwise, resolve the deferred (which triggers the original 'success' callbacks).
 		if ( xhr.status === 201 && !resp ) { // 201 CREATED; response null or empty.
 		    var location = xhr.getResponseHeader( 'Location' );
+		    if (window.location.protocol === "https") {
+			// Remove http://host when using https:// (work around issue in tastypie)
+			location = location.replace("http://" + host);
+		    }
 		    return $.ajax( {
 			url: model.addApiKey(location),
 			success: dfd.resolve,
