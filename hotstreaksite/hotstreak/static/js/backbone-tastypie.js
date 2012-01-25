@@ -27,7 +27,7 @@
 		    var location = xhr.getResponseHeader( 'Location' );
 		    if (window.location.protocol === "https:") {
 			// Remove http://host when using https:// (work around issue in tastypie)
-			location = location.replace("http://" + host);
+			location = location.replace("http://" + window.location.host, "");
 		    }
 		    return $.ajax( {
 			url: model.addApiKey(location),
