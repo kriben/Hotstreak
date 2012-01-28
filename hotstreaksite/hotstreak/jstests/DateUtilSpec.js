@@ -68,4 +68,16 @@ describe("DateUtil", function() {
     it("should compute current streak for single date in the future", function() {
         expect(DateUtil.computeCurrentStreak("2011-11-20", [ "2011-11-24" ])).toEqual(0);
     });
+
+    it("should make a histogram of dates per week", function() {
+        expect(DateUtil.computeHistogram("2012-01-28", [ "2012-01-25", "2012-01-19", "2012-01-18" ], 2)).toEqual([ 1, 2 ]);
+    });
+
+    it("should make a histogram of dates per week with some weeks without entries", function() {
+        expect(DateUtil.computeHistogram("2012-01-28", [ "2012-01-25", "2012-01-19", "2012-01-18" ], 4)).toEqual([ 1, 2, 0, 0 ]);
+    });
+
+    it("should make a histogram of dates per week for no dates", function() {
+        expect(DateUtil.computeHistogram("2012-01-28", [], 3)).toEqual([ 0, 0, 0 ]);
+    });
 });

@@ -66,4 +66,24 @@ var DateUtil = new function() {
 
         return current;
     };
+
+    this.computeHistogram = function(date, dates, nWeeks) {
+        var findWeekNumber = function(d) {
+            return parseInt(moment(d).format("w"), 10) 
+        }
+
+        var counts = [];
+        for (var i = 0; i < nWeeks; i++) {
+            counts.push(0);
+        }
+        
+        var currentWeek = findWeekNumber(date);
+        var weekNumbers = _.map(dates, findWeekNumber);
+        _.each(weekNumbers, function(w) {
+            var index = currentWeek - w; 
+            counts[index] = counts[index] + 1;
+        });
+        
+        return counts;
+    };
 };
