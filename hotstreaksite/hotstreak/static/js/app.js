@@ -87,9 +87,12 @@ $(function() {
             var dates = _.map(collection.models, function(m) {
                 return m.toJSON()["date"];
             });
+            var today = moment().format("YYYY-MM-DD");
             var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
-            var currentStreak = DateUtil.computeCurrentStreak(moment().format("YYYY-MM-DD"), dates.sort());
+            var currentStreak = DateUtil.computeCurrentStreak(today, dates.sort());
+            var histogram = DateUtil.computeHistogram(today, dates, 4);
 
+            $(this.el).find("#histogram").sparkline(histogram, { type: 'line', width:100});
             $(this.el).find("#longest").html("Longest streak: " + longestStreak);
             $(this.el).find("#current").html("Current streak: " + currentStreak);
         },
