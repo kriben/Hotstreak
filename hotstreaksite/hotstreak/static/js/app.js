@@ -23,6 +23,7 @@ $(function() {
             'click #mark_task_for_today': 'markTaskForToday',
         },
         initialize: function() {
+            _.bindAll(this, 'computeAndDisplayStreaks', 'updateLongestStreak');
             this.entries = new Entries();
             this.entries.username = this.username;
             this.entries.apikey = this.apikey;
@@ -32,6 +33,7 @@ $(function() {
         render: function(){
             var task = this.model.toJSON();
             $(this.el).html(_.template($("#task_template").html(), { title : task["title"], id : task["id"] }));
+            this.fetchEntriesAndUpdateStreak();
             return this;
         },
         openCalendar: function() {
@@ -70,20 +72,29 @@ $(function() {
             this.entries.fetch({ data : { task: task.get("id") },
                                  success: markTaskIfNotInList });
         },
-        updateLongestStreak: function(entry) {
-            var dates = _.map(entry.collection.models, function(m) {
+        fetchEntriesAndUpdateStreak: function() {
+            var task = this.model;
+            var view = this;
+            var computeAndDisplayStreaks = function(collection) {
+                view.computeAndDisplayStreaks(collection);
+            }
+
+            this.entries.fetch({ data : { task: task.get("id") },
+                                 success: computeAndDisplayStreaks });
+
+        },
+        computeAndDisplayStreaks: function(collection) {
+            var dates = _.map(collection.models, function(m) {
                 return m.toJSON()["date"];
             });
             var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
             var currentStreak = DateUtil.computeCurrentStreak(moment().format("YYYY-MM-DD"), dates.sort());
 
-            var taskId = entry.get("task").split("/")[4];
-            var taskElement = $('.task img').filter(function() {
-                return (taskId == $(this).data('taskid'));
-            });
-
-            $(taskElement[0]).parent().find("#longest").html("Longest streak: " + longestStreak);
-            $(taskElement[0]).parent().find("#current").html("Current streak: " + currentStreak);
+            $(this.el).find("#longest").html("Longest streak: " + longestStreak);
+            $(this.el).find("#current").html("Current streak: " + currentStreak);
+        },
+        updateLongestStreak: function(entry) {
+            this.computeAndDisplayStreaks(entry.collection);
         },
         saveDates: function() {
             var datepickerId = "#datepicker" + this.model.get("id");
