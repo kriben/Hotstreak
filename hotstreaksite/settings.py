@@ -1,5 +1,6 @@
 # Django settings for hotstreaksite project.
 
+HTTPS_ONLY = True
 DEBUG = False
 API_LIMIT_PER_PAGE = 0
 
