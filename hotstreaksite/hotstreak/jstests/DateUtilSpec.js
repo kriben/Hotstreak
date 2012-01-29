@@ -80,4 +80,21 @@ describe("DateUtil", function() {
     it("should make a histogram of dates per week for no dates", function() {
         expect(DateUtil.computeHistogram("2012-01-28", [], 3)).toEqual([ 0, 0, 0 ]);
     });
+
+    it("should make a histogram of dates per week with some weeks around new year", function() {
+        expect(DateUtil.computeHistogram("2012-01-12", [ "2012-01-11", "2012-01-10", "2012-01-04", "2011-12-28", "2011-12-24" ], 5)).toEqual([ 2, 1, 1, 1, 0 ]);
+    });
+
+    it("should make a histogram of dates per week with some weeks around new year excludes old entries", function() {
+        expect(DateUtil.computeHistogram("2012-01-12", [ "2012-01-11", "2012-01-10", "2012-01-04", "2011-12-28", "2011-12-24", "1979-09-07", "1981-09-22" ], 10)).toEqual([ 2, 1, 1, 1, 0, 0, 0, 0, 0, 0 ]);
+    });
+
+    it("should make a histogram of dates per week with some weeks around new year excludes old entries", function() {
+	expect(DateUtil.computeHistogram("2012-01-29", ["2012-01-05", "2012-01-09", "2012-01-10", "2012-01-11", "2012-01-12", "2012-01-13", "2012-01-14", "2012-01-15", 
+							"2012-01-17", "2012-01-18", "2012-01-19", "2012-01-24", "2012-01-25", "2012-01-26", "2012-01-27"], 10)).toEqual([4, 3, 7, 1, 0, 0, 0, 0, 0, 0]);
+    });
+
+    it("shoule make a histogram for dates when all are in the same week", function() {
+	expect(DateUtil.computeHistogram("2012-01-29", ["2012-01-16", "2012-01-17", "2012-01-18", "2012-01-19", "2012-01-20", "2012-01-21", "2012-01-22"], 3)).toEqual([0, 7, 0]);
+    });
 });

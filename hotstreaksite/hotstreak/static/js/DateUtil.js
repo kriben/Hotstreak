@@ -69,19 +69,55 @@ var DateUtil = new function() {
 
     this.computeHistogram = function(date, dates, nWeeks) {
         var findWeekNumber = function(d) {
-            return parseInt(moment(d).format("w"), 10) 
+            return parseInt(moment(d).format("w"), 10); 
         }
+
+	var convertToWeekNumber = function(d) {
+	    var w = parseInt(d.format("w"), 10);
+	    if (d.day() === 0) {
+		// Our week start on monday!
+		return w - 1;
+	    }
+
+	    return w;
+	}
+
+	var makeMomentDate = function(d) {
+	    return moment(d);
+	}
 
         var counts = [];
         for (var i = 0; i < nWeeks; i++) {
             counts.push(0);
         }
-        
-        var currentWeek = findWeekNumber(date);
-        var weekNumbers = _.map(dates, findWeekNumber);
-        _.each(weekNumbers, function(w) {
-            var index = currentWeek - w; 
-            counts[index] = counts[index] + 1;
+
+	var mDate = makeMomentDate(date);
+        var currentWeek = convertToWeekNumber(mDate);
+
+	// Check of our range crosses new year.
+	// Which gives week numbers like this: 51, 52, 1, 2, 3
+	var offset = 0;
+	var isCrossingNewYear = false;
+	if (currentWeek - nWeeks < 0) {
+	    offset = Math.abs(currentWeek - nWeeks);	    
+	    isCrossingNewYear = true;
+	}
+
+	var mDates = _.map(dates, makeMomentDate);
+        _.each(mDates, function(w) {
+	    var diff = mDate.diff(w, "weeks"); 
+	    if (diff < nWeeks + 1) { // Exclude to old entries
+		var wNum = convertToWeekNumber(w);
+		var index = currentWeek - wNum;
+		if (isCrossingNewYear) {
+		    if (wNum - nWeeks >= 0) {    
+			// last year
+			index = 52 + index;
+		    }
+		}	    
+
+		counts[index] = counts[index] + 1;
+	    }
         });
         
         return counts;
