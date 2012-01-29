@@ -90,7 +90,7 @@ $(function() {
             var today = moment().format("YYYY-MM-DD");
             var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
             var currentStreak = DateUtil.computeCurrentStreak(today, dates.sort());
-            var histogram = DateUtil.computeHistogram(today, dates, 4);
+            var histogram = DateUtil.computeHistogram(today, dates, 10).reverse();
 
             $(this.el).find("#histogram").sparkline(histogram, { type: 'line', width:100});
             $(this.el).find("#longest").html("Longest streak: " + longestStreak);
