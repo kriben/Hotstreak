@@ -12,9 +12,14 @@
     <script src="{{STATIC_URL}}js/backbone-tastypie.js"></script>
     <script src="{{STATIC_URL}}js/jquery-ui-1.8.16.custom.min.js"></script>
     <script src="{{STATIC_URL}}js/jquery-ui.multidatespicker.js"></script>
-    <script src="{{STATIC_URL}}js/bootstrap-modal.js"></script>
     <script src="{{STATIC_URL}}js/DateUtil.js"></script>
     <script src="{{STATIC_URL}}js/app.js"></script>
+
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
 
 {% endblock %}
 
@@ -30,29 +35,30 @@
 
   <div id="task_calendar_modal" class="modal hide">
     <div class="modal-header">
-      <a href="#" class="close">&times;</a>
+      <a href="#" data-dismiss="modal"class="close">&times;</a>
       <h3>Mark task: <%= title %></h3>
     </div>
     <div class="modal-body">
       <div id="datepicker<%= id %>"></div>
     </div>
     <div class="modal-footer">
-      <button id="save_dates" class="test btn primary">OK</button>
-      <button id="close_calendar_modal" class="btn secondary">Cancel</button>
+      <button id="save_dates" class="test btn btn-primary">OK</button>
+      <button id="close_calendar_modal" class="btn btn-secondary">Cancel</button>
     </div>
   </div>
 </script>
 
 
-<div class="topbar">
-  <div class="fill">
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
     <div class="container">
       <a class="brand" href="#">Hotstreak</a>
-
-      <ul class="nav">
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
@@ -63,15 +69,14 @@
 
         <div id="app" data-username="{{ username }}" data-apikey="{{api_key}}">
 
-          <h1>Tasks</h1>
           <ul id="tasks">
           </ul>
 
-          <a class="btn" data-controls-modal="create_task_modal" data-backdrop="static" >Create task</a>
+          <a class="btn" data-toggle="modal" href="#create_task_modal">Create task</a>
 
           <div id="create_task_modal" class="modal hide">
             <div class="modal-header">
-              <a href="#" class="close">&times;</a>
+              <a href="#" data-dismiss="modal" class="close">&times;</a>
               <h3>Create task</h3>
             </div>
             <div class="modal-body">
@@ -90,7 +95,7 @@
               </form>
             </div>
             <div class="modal-footer">
-              <button id="create_task" class="btn primary create_task">Create task</button>
+              <button id="create_task" class="btn btn-primary create_task">Create task</button>
             </div>
           </div>
         </div>
@@ -98,4 +103,6 @@
     </div>
   </div>
 </div>
+
+<script src="{{STATIC_URL}}js/bootstrap-modal.js"></script>
 {% endblock %}
