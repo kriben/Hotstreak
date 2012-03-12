@@ -31,20 +31,17 @@ $(function() {
             this.entries.bind('remove', this.updateLongestStreak);
         },
         render: function(){
-            var task = this.model.toJSON();
-            $(this.el).html(_.template($("#task_template").html(), { title : task["title"], id : task["id"] }));
+            $(this.el).html(_.template($("#task_template").html(), { title : this.model.get("title"), id : this.model.get("id") }));
             this.fetchEntriesAndUpdateStreak();
             return this;
         },
         openCalendar: function() {
             var datepickerId = "#datepicker" + this.model.get("id");
-            this.$(datepickerId).multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd"  });
+            this.$(datepickerId).multiDatesPicker({ firstDay: 1, dateFormat: "yy-mm-dd" });
             this.$(datepickerId).multiDatesPicker("resetDates");
 
             var setDatesInCalendar = function(collection) {
-                var dates = _.map(collection.models, function(m) {
-                    return m.toJSON()["date"];
-                });
+                var dates = collection.pluck("date");
                 currentDates = dates;
                 if (dates.length > 0) {
                     this.$(datepickerId).multiDatesPicker('addDates', dates);
@@ -61,8 +58,8 @@ $(function() {
             var task = this.model;
             var view = this;
             var markTaskIfNotInList = function(collection) {
-                var dateAlreadyMarked = _.any(collection.models, function(m) {
-                    return m.toJSON()["date"] === today;
+                var dateAlreadyMarked = collection.any(function(m) {
+                    return m.get("date") === today;
                 });
                 if (!dateAlreadyMarked) {
                     view.entries.create({ task: task.id, date: today });
@@ -84,9 +81,7 @@ $(function() {
 
         },
         computeAndDisplayStreaks: function(collection) {
-            var dates = _.map(collection.models, function(m) {
-                return m.toJSON()["date"];
-            });
+            var dates = collection.pluck("date");
             var today = moment().format("YYYY-MM-DD");
             var longestStreak = DateUtil.computeConsecutiveDays(dates.sort());
             var currentStreak = DateUtil.computeCurrentStreak(today, dates.sort());
@@ -113,10 +108,11 @@ $(function() {
 
             // Find the dates deleted by the user (was in the old list, not in the new)
             var entriesToDelete = _.map(datesToDelete, function(date) {
-                return _.find(this.entries.models, function(entry) {
+                return this.entries.find(function(entry) {
                     return entry.get("date") === date;
                 });
             }, this);
+
             // Delete the entries which the user unmarked
             _.each(entriesToDelete, function(d) {
                 d.destroy();
