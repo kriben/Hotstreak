@@ -133,6 +133,7 @@ $(function() {
         username: $("#app").data("username"),
         apikey: $("#app").data("apikey"),
         events: {
+	    'click #show_create_task_modal': 'showTaskDialog',
             'click .create_task': 'createTask',
         },
         initialize: function(){
@@ -153,14 +154,28 @@ $(function() {
             var view = new TaskView({model:task});
             this.$('#tasks').append(view.render().el);
         },
+	showTaskDialog: function() {
+	    this.clearTaskDialog();
+	    $("#create_task_modal").modal("show");
+	},
+	clearTaskDialog: function() {
+	    $("#title").val("");
+	    $("#description").val("");
+	    $("#title_error_message").text("");
+	    $("#title_control_group").removeClass("error");
+	},
         createTask: function() {
-            this.tasks.create({ title: $("#title").val(),
-                                description: $("#description").val()
-                              });
-
-            $("#title").val("");
-            $("#description").val("");
-            $("#create_task_modal").modal("hide");
+	    var title = $("#title").val();
+	    if (title && title.length > 0) {
+		var description = $("#description").val();
+		this.tasks.create({ title: title, description: description });
+		this.clearTaskDialog();
+		$("#create_task_modal").modal("hide");
+	    }
+	    else {
+		$("#title_error_message").text("Add non-empty title.");
+		$("#title_control_group").addClass("error");
+	    }
         },
     });
 

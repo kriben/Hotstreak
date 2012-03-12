@@ -72,7 +72,7 @@
           <ul id="tasks">
           </ul>
 
-          <a class="btn" data-toggle="modal" href="#create_task_modal">Create task</a>
+          <a class="btn" id="show_create_task_modal">Create task</a>
 
           <div id="create_task_modal" class="modal hide">
             <div class="modal-header">
@@ -84,8 +84,10 @@
                 <fieldset>
                   {% csrf_token %}
                   <div class="clearfix">
-                    <label>Title</label>
-                    <div class="input"><input id="title" type="text"></div>
+		    <div id="title_control_group" class="control-group">
+                      <label>Title</label> 
+                      <div class="input"><input id="title" type="text"><span id="title_error_message" class="help-inline"></span></div>
+		    </div>
                   </div>
                   <div class="clearfix">
                     <label>Description</label>
