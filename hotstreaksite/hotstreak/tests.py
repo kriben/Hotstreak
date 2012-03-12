@@ -59,8 +59,20 @@ class EmptyDbApiTest(TestCase):
     def test_post_a_new_task(self):
         auth_data = get_auth_dict(self.user)
         post_data = { "title": "New task", "description":  "New description" }
-        response = self.client.post("%s?username=%s&api_key=%s" % (self.task_url, auth_data["username"], auth_data["api_key"]), json.dumps(post_data), content_type="application/json") 
+        response = self.client.post(self.create_post_url(self.task_url, auth_data), json.dumps(post_data), content_type="application/json") 
         self.assertEqual(response.status_code, 201)
+
+    def test_post_a_new_task_with_empty_title(self):
+        auth_data = get_auth_dict(self.user)
+        post_data = { "title": "", "description":  "New description" }
+        response = self.client.post(self.create_post_url(self.task_url, auth_data), json.dumps(post_data), content_type="application/json") 
+        self.assertEqual(response.status_code, 400)
+
+    def test_post_a_new_task_without_title(self):
+        auth_data = get_auth_dict(self.user)
+        post_data = { "description":  "New description" }
+        response = self.client.post(self.create_post_url(self.task_url, auth_data), json.dumps(post_data), content_type="application/json") 
+        self.assertEqual(response.status_code, 400)
 
     def test_post_a_new_entry(self):
         task = Task(user = self.user, title = "title", description = "description")
@@ -68,9 +80,11 @@ class EmptyDbApiTest(TestCase):
 
         post_data = { "task": "/api/v1/task/1/", "date": "2009-11-22" }
         auth_data = get_auth_dict(self.user)
-        response = self.client.post("%s?username=%s&api_key=%s" % (self.entry_url, auth_data["username"], auth_data["api_key"]), json.dumps(post_data), content_type="application/json") 
+        response = self.client.post(self.create_post_url(self.entry_url, auth_data), json.dumps(post_data), content_type="application/json") 
         self.assertEqual(response.status_code, 201)
 
+    def create_post_url(self, url, auth_data):
+        return "%s?username=%s&api_key=%s" % (url, auth_data["username"], auth_data["api_key"])
 
     def create_task_for_user(self, user, title, description):
         task = Task(user = user, title = title, description = description)
@@ -81,7 +95,7 @@ class EmptyDbApiTest(TestCase):
         entry = Entry(task = task, date = date)
         entry.save()
         return entry
-        
+
 
 class AuthenticationApiTest(TestCase):
     fixtures = [ "two_users_with_two_tasks.json" ]

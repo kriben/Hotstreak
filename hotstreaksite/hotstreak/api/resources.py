@@ -3,6 +3,8 @@ from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie import fields
 from tastypie.resources import ModelResource
+from tastypie.http import HttpBadRequest
+from tastypie.exceptions import ImmediateHttpResponse
 from hotstreak.models import Task, Entry
 
 
@@ -15,6 +17,9 @@ class TaskResource(ModelResource):
         authentication = ApiKeyAuthentication()
 
     def obj_create(self, bundle, request=None, **kwargs):
+        if not bundle.data.has_key("title") or not bundle.data["title"]:
+            raise ImmediateHttpResponse(response=HttpBadRequest())
+        
         return super(TaskResource, self).obj_create(bundle, request, 
                                                     user=request.user)
 
